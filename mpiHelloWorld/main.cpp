@@ -13,10 +13,8 @@ int main(int argc, char **argv) {
 	MPI_Comm_rank(MCW, &rank);
 	MPI_Comm_size(MCW, &size);
 
-	if(rank == 0) {
-		MPI_Send(&rank, 1, MPI_INT, (rank + 1) % size, 0, MCW);
-		MPI_Recv(&data, 1, MPI_INT, MPI_ANY_SOURCE, 0, MCW, MPI_STATUS_IGNORE);
-	}
+	MPI_Send(&rank, 1, MPI_INT, (rank + 1) % size, 0, MCW);
+	MPI_Recv(&data, 1, MPI_INT, MPI_ANY_SOURCE, 0, MCW, MPI_STATUS_IGNORE);
 
 	cout << "I am " << rank << " of " << size << "; got message from " << data << endl;
 
