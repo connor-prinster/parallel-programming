@@ -10,18 +10,18 @@ using namespace std;
 int main(int argc, char **argv) {
 	srand(time(NULL));
 
+	// init a handful of items that are essentially global
 	int rank, size;
 	int data;
 	MPI_Init(&argc, &argv);
-	MPI_Comm_rank(MCW, &rank);
-	MPI_Comm_size(MCW, &size);
+	MPI_Comm_rank(MCW, &rank); // init rank
+	MPI_Comm_size(MCW, &size); // init size
 
-	// random numbers for time and process chosen
+	// random numbers for time (1-10) and process (1-size) chosen
 	int currTime = rand() % 10 + 1;
 	int randProc = rand() % size;
 
-	// will decrement when received, so this must stop if
-	//the timer is received at time 1
+	// will decrement when received, so this must stop if the timer is received at time 1
 	while( currTime > 0 ) {
 		sleep(1);
 		if( rank == randProc ) {
@@ -29,24 +29,23 @@ int main(int argc, char **argv) {
 			while(rank == randProc) {
 				randProc = rand() % size;
 			}
-			printf("rank: %d -> passing to proc: %d -> with timer %d\n", rank, randProc, currTime );
-			// send the random time to the randomly chosen process
+			printf("process: %d -> passing to process: %d -> with timer: %d\n", rank, randProc, currTime );
 			MPI_Send( &currTime, 1, MPI_INT, randProc, 0, MCW );
 		} else {
 			MPI_Recv( &currTime, 1, MPI_INT, MPI_ANY_SOURCE, 0, MCW, MPI_STATUS_IGNORE );
-			printf("proc %d -> received bomb\n",
-				rank, currTime);
+			printf("process %d -> received bomb\n", rank, currTime);
 			currTime--;
-			printf("time decremented to %d\n", currTime);
+			printf("time decremented to %d\n\n", currTime);
 			if(currTime == 0) {
-				printf("\n\nTHE BIGGEST LOSER IS %d\n\n", rank);
+				printf("PROCESS %d LOST\n\n", rank);
 				MPI_Abort(MCW, 0);
 			}
 			randProc = rand() % size;
+			// make sure that you don't send a process to itself
 			while(rank == randProc) {
 				randProc = rand() % size;
 			}
-			printf("rank: %d -> passing to proc: %d -> with timer %d\n", rank, randProc, currTime );
+			printf("process: %d -> passing to process: %d -> with timer: %d\n", rank, randProc, currTime );
 			MPI_Send( &currTime, 1, MPI_INT, randProc, 0, MCW );
 		}
 	}
