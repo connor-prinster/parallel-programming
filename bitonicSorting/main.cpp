@@ -15,10 +15,21 @@ int main(int argc, char **argv) {
 
 	int rank, size;
 	int* list = NULL;
+	// what power of two to go to
+	// what the actual size is
+	int powOfTwo = 0;
+	int powSize = 1;
 
 	MPI_Init(&argc, &argv);
 	MPI_Comm_rank(MCW, &rank);
 	MPI_Comm_size(MCW, &size);
+
+	while(powSize<size){
+        	powSize<<=1;
+        	powOfTwo++;
+    	}
+
+	printf("powsize: %d -> powoftwo: %d\n", powSize, powOfTwo);
 
 	if(rank == 0) {
 		int len = 32; //2 ^ (rand() % 8 + 4)
@@ -26,7 +37,7 @@ int main(int argc, char **argv) {
 		for(int i = 0; i < len; i++) {
 			list[i] = rand() % 100 + 1;
 		}
-		printArr(list, len);
+//		printArr(list, len);
 	}
 
 	MPI_Finalize();
