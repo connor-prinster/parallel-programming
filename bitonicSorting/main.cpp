@@ -21,10 +21,10 @@ int main(int argc, char **argv) {
 	MPI_Comm_size(MCW, &size);
 
 	if(rank == 0) {
-		int len = (rand() % 100 + 1) * (size - 1);
+		int len = 32; //2 ^ (rand() % 8 + 4)
 		list = (int*) malloc(len * sizeof(int));
 		for(int i = 0; i < len; i++) {
-			list[i] = rand() % 500 + 1;
+			list[i] = rand() % 100 + 1;
 		}
 		printArr(list, len);
 	}
