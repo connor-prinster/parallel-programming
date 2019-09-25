@@ -14,10 +14,12 @@ int main(int argc, char **argv) {
 	srand(time(NULL)); // init the time
 
 	int rank, size;
+
+	// the list of random numbers
 	int* list = NULL;
 	// what power of two to go to
-	// what the actual size is
 	int powOfTwo = 0;
+	// the number of processors
 	int powSize = 1;
 
 	MPI_Init(&argc, &argv);
@@ -29,20 +31,22 @@ int main(int argc, char **argv) {
         	powOfTwo++;
     	}
 
-	printf("powsize: %d -> powoftwo: %d\n", powSize, powOfTwo);
-
 	if(rank == 0) {
-		int len = 32; //2 ^ (rand() % 8 + 4)
+		int len = powSize;
 		list = (int*) malloc(len * sizeof(int));
 		for(int i = 0; i < len; i++) {
 			list[i] = rand() % 100 + 1;
 		}
-//		printArr(list, len);
+		printArr(list, len);
 	}
 
 	MPI_Finalize();
 
 	return 0;
+}
+
+void bitonicOrder() {
+
 }
 
 void printArr(int* arr, int randLength) {
