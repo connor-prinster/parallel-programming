@@ -62,7 +62,7 @@ void printArr(int* arr, int randLength) {
 // FROM GEEKSFORGEEKS
 void compAndSwap(int a[], int i, int j, int direction) { 
     if (direction==(a[i]>a[j])) 
-        swap(a[i],a[j]); 
+        swap(a, i, j); 
 } 
   
 // FROM GEEKSFORGEEKS
