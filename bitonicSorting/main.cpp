@@ -9,6 +9,9 @@
 using namespace std;
 
 void printArr(int arr[], int randLength);
+void compAndSwap(int a[], int i, int j, int direction);
+void bitonicMerge(int a[], int low, int cnt, int dir);
+void bitonicSort(int a[],int low, int cnt, int dir); 
 
 int main(int argc, char **argv) {
 	srand(time(NULL)); // init the time
@@ -27,12 +30,13 @@ int main(int argc, char **argv) {
 	MPI_Comm_size(MCW, &size);
 
 	while(powSize<size){
-        	powSize<<=1;
-        	powOfTwo++;
-    	}
+       	powSize<<=1;
+       	powOfTwo++;
+    }
 
+	// generate the random list
 	if(rank == 0) {
-		int len = powSize;
+		int len = powSize >> 1;
 		list = (int*) malloc(len * sizeof(int));
 		for(int i = 0; i < len; i++) {
 			list[i] = rand() % 100 + 1;
@@ -45,10 +49,6 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
-void bitonicOrder() {
-
-}
-
 void printArr(int* arr, int randLength) {
 	if(arr != NULL) {
 		for(int i = 0; i < randLength; i++) {
@@ -57,3 +57,38 @@ void printArr(int* arr, int randLength) {
 		printf("\n\n\n");
 	}
 }
+
+// FROM GEEKSFORGEEKS
+void compAndSwap(int a[], int i, int j, int direction) { 
+    if (direction==(a[i]>a[j])) 
+        swap(a[i],a[j]); 
+} 
+  
+// FROM GEEKSFORGEEKS
+void bitonicMerge(int a[], int low, int cnt, int dir) { 
+    if (cnt>1) { 
+        int k = cnt/2; 
+        for (int i=low; i<low+k; i++) 
+            compAndSwap(a, i, i+k, dir); 
+        bitonicMerge(a, low, k, dir); 
+        bitonicMerge(a, low+k, k, dir); 
+    } 
+} 
+
+// FROM GEEKSFORGEEKS
+void bitonicSort(int a[],int low, int cnt, int dir) { 
+    if (cnt>1) 
+    { 
+        int k = cnt/2; 
+  
+        // sort in ascending order since dir here is 1 
+        bitonicSort(a, low, k, 1); 
+  
+        // sort in descending order since dir here is 0 
+        bitonicSort(a, low+k, k, 0); 
+  
+        // Will merge wole sequence in ascending order 
+        // since dir=1. 
+        bitonicMerge(a,low, cnt, dir); 
+    } 
+} 
