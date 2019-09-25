@@ -11,7 +11,8 @@ using namespace std;
 void printArr(int arr[], int randLength);
 void compAndSwap(int a[], int i, int j, int direction);
 void bitonicMerge(int a[], int low, int cnt, int dir);
-void bitonicSort(int a[],int low, int cnt, int dir); 
+void bitonicSort(int a[], int low, int cnt, int dir); 
+void swap(int a[], int i, int j);
 
 int main(int argc, char **argv) {
 	srand(time(NULL)); // init the time
@@ -74,6 +75,12 @@ void bitonicMerge(int a[], int low, int cnt, int dir) {
         bitonicMerge(a, low+k, k, dir); 
     } 
 } 
+
+void swap(int a[], int i, int j) {
+	int k = a[i];
+	a[i] = a[j];
+	a[j] = k;
+}
 
 // FROM GEEKSFORGEEKS
 void bitonicSort(int a[],int low, int cnt, int dir) { 
