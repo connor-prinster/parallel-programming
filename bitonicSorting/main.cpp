@@ -4,14 +4,14 @@
 #include <stdio.h>      /* printf */
 #include <stdlib.h>     /* qsort */
 #include <string>
-#include <vector>
+#include <bitset>
 
 #define MCW MPI_COMM_WORLD
 
 using namespace std;
 
 void printArr(int arr[], int randLength);
-int* decimalBinary(int dec);
+string decimalBinary(int dec);
 
 int main(int argc, char **argv) {
 	srand(time(NULL)); // init the time
@@ -60,17 +60,7 @@ void printArr(int* arr, int randLength) {
 	}
 }
 
-int* decimalBinary(int dec) {
-	vector<int> binaryNum
-	printf("%d decimal number\n", dec)
-	int i = 0;
-	while (dec > 0) { 
-        binaryNum.push_back(dec % 2); 
-		printf("%d", binaryNum[i]);
-        dec = dec / 2; 
-        i++; 
-    } 
-	printf("\n");
-
-	return binaryNum;
+string decimalBinary(int dec) {
+	std::string binary = std::bitset<8>(128).to_string(); //to binary
+    std::cout<<binary<<"\n";
 }
