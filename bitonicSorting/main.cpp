@@ -13,7 +13,6 @@ void compAndSwap(int a[], int i, int j, int direction);
 void bitonicMerge(int a[], int low, int cnt, int dir);
 void bitonicSort(int a[], int low, int cnt, int dir); 
 void swap(int a[], int i, int j);
-int* genRandList(len);
 
 int main(int argc, char **argv) {
 	srand(time(NULL)); // init the time
@@ -32,16 +31,17 @@ int main(int argc, char **argv) {
 	MPI_Comm_size(MCW, &size);
 
 	while(powSize<size){
-       	powSize<<=1;
+       	powSize <<= 1;
        	powOfTwo++;
     }
 
 	// generate the random list
 	if(rank == 0) {
 		int len = powSize << 1;
+		int fakeList[powSize] = {2, 4, 6, 8, 7, 5, 3, 1};
 		list = (int*) malloc(len * sizeof(int));
 		for(int i = 0; i < len; i++) {
-			list[i] = rand() % 100 + 1;
+			list[i] = fakeList[i];
 		}
 		printArr(list, len);
 	}
