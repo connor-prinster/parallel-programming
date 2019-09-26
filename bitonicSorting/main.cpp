@@ -6,13 +6,14 @@
 #include <string>
 #include <bitset>
 #include <iostream>
+#include <sstream>
 
 #define MCW MPI_COMM_WORLD
 
 using namespace std;
 
 void printArr(int arr[], int randLength);
-string decimalBinary(int dec);
+int lastBit(int dec);
 
 int main(int argc, char **argv) {
 	srand(time(NULL)); // init the time
@@ -44,8 +45,7 @@ int main(int argc, char **argv) {
 		binList = (string*) malloc(len * sizeof(string));
 		for(int i = 0; i < len; i++) {
 			list[i] = fakeList[i];
-			binList[i] = decimalBinary(list[i]);
-			cout << "dec -> " << list[i] << " bin -> " << binList[i] << endl;
+			cout << "dec -> " << list[i] << " last bin -> " << lastBit(list[i]) << endl;
 		}
 		printArr(list, len);
 	}
@@ -64,7 +64,9 @@ void printArr(int* arr, int randLength) {
 	}
 }
 
-string decimalBinary(int dec) {
+int lastBit(int dec) {
 	string binary = std::bitset<4>(dec).to_string();
-	return binary;
+	char lastBit = binary[3];
+
+	return (int)lastBit;
 }
