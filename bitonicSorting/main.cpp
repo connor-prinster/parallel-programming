@@ -13,7 +13,7 @@
 using namespace std;
 
 void printArr(int arr[], int randLength);
-int lastBit(int dec);
+string lastBit(int dec);
 
 int main(int argc, char **argv) {
 	srand(time(NULL)); // init the time
@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
 		binList = (string*) malloc(len * sizeof(string));
 		for(int i = 0; i < len; i++) {
 			list[i] = fakeList[i];
-			cout << "dec -> " << list[i] << " last bin -> " << lastBit(list[i]) << endl;
+			cout << "dec -> " << list[i] << " bin -> " << lastBit(list[i]) << endl;
 		}
 		printArr(list, len);
 	}
@@ -64,9 +64,6 @@ void printArr(int* arr, int randLength) {
 	}
 }
 
-int lastBit(int dec) {
-	string binary = std::bitset<4>(dec).to_string();
-	char lastBit = binary[3];
-
-	return (int)lastBit;
+string lastBit(int dec) {
+	return std::bitset<4>(dec).to_string();
 }
