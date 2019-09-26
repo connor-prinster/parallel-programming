@@ -63,10 +63,10 @@ int* decimalBinary(int dec) {
 	int binaryNum[4];
 
 	int i = 0;
-	while (n > 0) { 
+	while (dec > 0) { 
         binaryNum[i] = n % 2; 
-		printf(binaryNum[i])
-        n = n / 2; 
+		printf("%d", binaryNum[i])
+        dec = dec / 2; 
         i++; 
     } 
 	printf("\n");
