@@ -3,16 +3,14 @@
 #include <time.h>
 #include <stdio.h>      /* printf */
 #include <stdlib.h>     /* qsort */
+#include <string>
 
 #define MCW MPI_COMM_WORLD
 
 using namespace std;
 
 void printArr(int arr[], int randLength);
-void compAndSwap(int a[], int i, int j, int direction);
-void bitonicMerge(int a[], int low, int cnt, int dir);
-void bitonicSort(int a[], int low, int cnt, int dir); 
-void swap(int a[], int i, int j);
+int* decimalBinary(int dec);
 
 int main(int argc, char **argv) {
 	srand(time(NULL)); // init the time
@@ -38,10 +36,11 @@ int main(int argc, char **argv) {
 	// generate the random list
 	if(rank == 0) {
 		int len = powSize << 1;
-		int fakeList[powSize] = {2, 4, 6, 8, 7, 5, 3, 1};
+		int fakeList[powSize] = {4, 3, 0, 7, 1, 6, 2, 5};
 		list = (int*) malloc(len * sizeof(int));
 		for(int i = 0; i < len; i++) {
 			list[i] = fakeList[i];
+			decimalBinary(list[i]);
 		}
 		printArr(list, len);
 	}
@@ -60,43 +59,17 @@ void printArr(int* arr, int randLength) {
 	}
 }
 
-// FROM GEEKSFORGEEKS
-void compAndSwap(int a[], int i, int j, int direction) { 
-    if (direction==(a[i]>a[j])) 
-        swap(a, i, j); 
-} 
-  
-// FROM GEEKSFORGEEKS
-void bitonicMerge(int a[], int low, int cnt, int dir) { 
-    if (cnt>1) { 
-        int k = cnt/2; 
-        for (int i=low; i<low+k; i++) 
-            compAndSwap(a, i, i+k, dir); 
-        bitonicMerge(a, low, k, dir); 
-        bitonicMerge(a, low+k, k, dir); 
-    } 
-} 
+int* decimalBinary(int dec) {
+	int binaryNum[4];
 
-void swap(int a[], int i, int j) {
-	int k = a[i];
-	a[i] = a[j];
-	a[j] = k;
+	int i = 0;
+	while (n > 0) { 
+        binaryNum[i] = n % 2; 
+		printf(binaryNum[i])
+        n = n / 2; 
+        i++; 
+    } 
+	printf("\n");
+
+	return binaryNum;
 }
-
-// FROM GEEKSFORGEEKS
-void bitonicSort(int a[],int low, int cnt, int dir) { 
-    if (cnt>1) 
-    { 
-        int k = cnt/2; 
-  
-        // sort in ascending order since dir here is 1 
-        bitonicSort(a, low, k, 1); 
-  
-        // sort in descending order since dir here is 0 
-        bitonicSort(a, low+k, k, 0); 
-  
-        // Will merge wole sequence in ascending order 
-        // since dir=1. 
-        bitonicMerge(a,low, cnt, dir); 
-    } 
-} 
