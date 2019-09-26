@@ -60,7 +60,7 @@ void printArr(int* arr, int randLength) {
 }
 
 int* decimalBinary(int dec) {
-	int binaryNum[4];
+	int binaryNum[4] = NULL;
 
 	int i = 0;
 	while (dec > 0) { 
