@@ -4,6 +4,7 @@
 #include <stdio.h>      /* printf */
 #include <stdlib.h>     /* qsort */
 #include <string>
+#include <vector>
 
 #define MCW MPI_COMM_WORLD
 
@@ -60,16 +61,14 @@ void printArr(int* arr, int randLength) {
 }
 
 int* decimalBinary(int dec) {
-	int binaryNum[4] = {0, 0, 0, 0};
+	vector<int> binaryNum
 
-	int i = 0;
 	while (dec > 0) { 
-        binaryNum[i] = dec % 2; 
-		printf("%d", binaryNum[i]);
+        binaryNum.push_back(dec % 2); 
+		printf("%d", binaryNum.end());
         dec = dec / 2; 
-        i++; 
     } 
-	printf("\n");
+	printf("\n\n");
 
 	return binaryNum;
 }
