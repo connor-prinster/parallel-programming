@@ -61,6 +61,7 @@ void printArr(int* arr, int randLength) {
 }
 
 string decimalBinary(int dec) {
-	std::string binary = std::bitset<8>(128).to_string(); //to binary
-    std::cout<<binary<<"\n";
+	string binary = std::bitset<8>(n).to_string();
+    printf(binary);
+	printf("\n");
 }
