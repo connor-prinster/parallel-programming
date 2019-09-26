@@ -5,6 +5,7 @@
 #include <stdlib.h>     /* qsort */
 #include <string>
 #include <bitset>
+#include <iostream>
 
 #define MCW MPI_COMM_WORLD
 
@@ -20,6 +21,7 @@ int main(int argc, char **argv) {
 
 	// the list of random numbers
 	int* list = NULL;
+	string* binList = NULL;
 	// what power of two to go to
 	int powOfTwo = 0;
 	// the number of processors
@@ -39,9 +41,11 @@ int main(int argc, char **argv) {
 		int len = powSize << 1;
 		int fakeList[powSize] = {4, 3, 0, 7, 1, 6, 2, 5};
 		list = (int*) malloc(len * sizeof(int));
+		binList = (string*) malloc(len * sizeof(string));
 		for(int i = 0; i < len; i++) {
 			list[i] = fakeList[i];
-			decimalBinary(list[i]);
+			binList[i] = decimalBinary(list[i]);
+			cout << "dec -> " << list[i] << " bin -> " << binList[i] << endl;
 		}
 		printArr(list, len);
 	}
@@ -61,7 +65,6 @@ void printArr(int* arr, int randLength) {
 }
 
 string decimalBinary(int dec) {
-	string binary = std::bitset<8>(n).to_string();
-    printf(binary);
-	printf("\n");
+	string binary = std::bitset<4>(dec).to_string();
+	return binary;
 }
