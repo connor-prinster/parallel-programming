@@ -62,13 +62,15 @@ void printArr(int* arr, int randLength) {
 
 int* decimalBinary(int dec) {
 	vector<int> binaryNum
-
+	printf("%d decimal number\n", dec)
+	int i = 0;
 	while (dec > 0) { 
         binaryNum.push_back(dec % 2); 
-		printf("%d", binaryNum.end());
+		printf("%d", binaryNum[i]);
         dec = dec / 2; 
+        i++; 
     } 
-	printf("\n\n");
+	printf("\n");
 
 	return binaryNum;
 }
