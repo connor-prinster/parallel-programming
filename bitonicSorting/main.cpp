@@ -19,8 +19,7 @@ int main(int argc, char **argv) {
 
 	int rank, size;
 
-	// the list of random numbers
-	int* list = NULL;
+	int list[] = NULL;
 	// what power of two to go to
 	int powOfTwo = 0;
 	// the number of processors
@@ -31,17 +30,14 @@ int main(int argc, char **argv) {
 	MPI_Comm_size(MCW, &size);
 
 	while(powSize<size){
-       	powSize<<=1;
+       	powSize <<= 1;
        	powOfTwo++;
     }
 
 	// generate the random list
 	if(rank == 0) {
-		int len = powSize >> 1;
-		list = (int*) malloc(len * sizeof(int));
-		for(int i = 0; i < len; i++) {
-			list[i] = rand() % 100 + 1;
-		}
+		int len = powSize << 1;
+		list = {2, 4, 6, 8, 7, 5, 3, 1};
 		printArr(list, len);
 	}
 
@@ -58,44 +54,3 @@ void printArr(int* arr, int randLength) {
 		printf("\n\n\n");
 	}
 }
-
-// FROM GEEKSFORGEEKS
-void compAndSwap(int a[], int i, int j, int direction) { 
-    if (direction==(a[i]>a[j])) 
-        swap(a, i, j); 
-} 
-  
-// FROM GEEKSFORGEEKS
-void bitonicMerge(int a[], int low, int cnt, int dir) { 
-    if (cnt>1) { 
-        int k = cnt/2; 
-        for (int i=low; i<low+k; i++) 
-            compAndSwap(a, i, i+k, dir); 
-        bitonicMerge(a, low, k, dir); 
-        bitonicMerge(a, low+k, k, dir); 
-    } 
-} 
-
-void swap(int a[], int i, int j) {
-	int k = a[i];
-	a[i] = a[j];
-	a[j] = k;
-}
-
-// FROM GEEKSFORGEEKS
-void bitonicSort(int a[],int low, int cnt, int dir) { 
-    if (cnt>1) 
-    { 
-        int k = cnt/2; 
-  
-        // sort in ascending order since dir here is 1 
-        bitonicSort(a, low, k, 1); 
-  
-        // sort in descending order since dir here is 0 
-        bitonicSort(a, low+k, k, 0); 
-  
-        // Will merge wole sequence in ascending order 
-        // since dir=1. 
-        bitonicMerge(a,low, cnt, dir); 
-    } 
-} 
