@@ -60,12 +60,12 @@ void printArr(int* arr, int randLength) {
 }
 
 int* decimalBinary(int dec) {
-	int binaryNum[4] = NULL;
+	int binaryNum[4] = {0, 0, 0, 0};
 
 	int i = 0;
 	while (dec > 0) { 
-        binaryNum[i] = n % 2; 
-		printf("%d", binaryNum[i])
+        binaryNum[i] = dec % 2; 
+		printf("%d", binaryNum[i]);
         dec = dec / 2; 
         i++; 
     } 
