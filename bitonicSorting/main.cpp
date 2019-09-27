@@ -89,7 +89,7 @@ int ascDesc(int cending, int rank, int dmask, int a, int b) {
 	}
 
 	if (cending == 0) { // ascending
-		if (rank & dmask = 0) {
+		if (rank & dmask == 0) {
 			// return smaller
 			return small;
 		}
