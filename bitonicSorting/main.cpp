@@ -14,7 +14,7 @@ using namespace std;
 
 // reminder that 0 = Ascending
 // reminder that 1 = Decending
-
+int ascDesc(int cending, int rank, int dmask, int a, int b);
 void printArr(int arr[], int randLength);
 
 int main(int argc, char **argv) {
@@ -39,6 +39,7 @@ int main(int argc, char **argv) {
 	int* list = (int*) malloc(powSize * sizeof(int));
 
 	int mask = size;
+	int dmask = mask;
 
 	// generate the random list
 	if(rank == 0) {
@@ -55,16 +56,16 @@ int main(int argc, char **argv) {
 
 	int val = list[rank];
 	int recv = 0;
-	mask >>= 1;
-	int dest = (rank ^ mask);
-//	cout << "rank: " << rank << " -> dest: " << dest << " -> val: " << val << endl;
-
-	MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
-	MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
-	printf("rank: %d -> val: %d -> recv: %d\n\n", rank, val, recv);
+	dmask >>= 1;
+	int dest = (rank ^ dmask);
+	while(dmask > 0) {
+		MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
+		MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
+		val = ascDesc(0, rank, dmask, val, recv);
+		dmask >>= 1;
+	}
 
 	MPI_Finalize();
-
 	return 0;
 }
 
@@ -88,9 +89,9 @@ int ascDesc(int cending, int rank, int dmask, int a, int b) {
 		big = b;
 		small = a;
 	}
-
+	//printf("cending: %d -> big: %d -> small: %d\n\n", cending, big, small);
 	if (cending == 0) { // ascending
-		if (rank & dmask == 0) {
+		if ((rank & dmask) == 0) {
 			// return smaller
 			return small;
 		}
@@ -100,10 +101,10 @@ int ascDesc(int cending, int rank, int dmask, int a, int b) {
 		}
 	}
 	else { // descending
-		if (rank & dmask == 0) {
+		if ((rank & dmask) == 0) {
 			// return bigger
 			return big;
-		} 
+		}
 		else {
 			// return smaller
 			return small;
