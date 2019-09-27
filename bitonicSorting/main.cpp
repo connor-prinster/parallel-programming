@@ -51,24 +51,28 @@ int main(int argc, char **argv) {
 	MPI_Bcast(list, powSize, MPI_INT, 0, MCW);
 	MPI_Barrier(MCW);
 
+	int dest = 0;
 	int val = list[rank];
 	int recv = 0;
-	dmask = 1;
-	int amask = 2;
-	// sort down, I guess?
-	while(amask < mask) {
-		int dest = (rank ^ dmask);
-		MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
-		MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
-
-		//cending would be 1 if (rank & amask == 0)
-		int cending = !((rank & amask) == 0);
-//		printf("rank %d -> amask %d -> cending ->%d\n", rank, amask, cending);
-		val = ascDesc(cending, rank, dmask, val, recv);
-//		printf("rank: %d -> keptVal: %d\n", rank, val);
-		dmask <<= 1;
-		amask <<= 1;
+	mask = 1;
+	int phase = 0;
+	while(phase < powSize) {
+		mask = 1;
+		mask >>= phase;
+		while(mask > 0) {
+			dest = rank ^ mask;
+			//printf("rank: %d -> dest: %d\n", rank, dest);
+			MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
+			MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
+			int cending = ((rank & (mask << 1)) == 0);
+//			printf("rank: %d -> recived: %d -> have: %d\n", rank, recv, val);
+			val = ascDesc(cending, rank, mask, val, recv);
+//			printf("rank: %d -> kept: %d\n", rank, val);
+			mask >>= 1;
+		}
+		phase++;
 	}
+
 	printf("rank: %d -> val: %d\n\n", rank, val);
 
 //	recv = 0;
@@ -109,24 +113,11 @@ int ascDesc(int cending, int rank, int dmask, int a, int b) {
 	}
 	//printf("rank: %d -> dmask: %d -> cending -> %d -> big: %d -> small %d\n", rank, dmask, cending,  big, small);
 	if (cending == 0) { // ascending
-		if ((rank & dmask) == 0) {
-		//	return small;
-			val = small;
-		}
-		else {
-//			return big;
-			val = big;
-		}
+		val = ((rank & dmask) == 0) ? small : big;
 	}
 	else { // descending
-		if ((rank & dmask) == 0) {
-//			return big;
-			val = big;
-		}
-		else {
-//			return small;
-			val = small;
-		}
+		val = ((rank & dmask) == 0) ? big : small;
+
 	}
 //	printf("rank %d -> returning %d\n", rank, val);
 	return val;
