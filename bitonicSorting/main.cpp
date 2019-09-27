@@ -37,32 +37,33 @@ int main(int argc, char **argv) {
        	powOfTwo++;
     }
 	int mask = size;
-	int dmask = mask;
 
 	// generate the random list
 	if(rank == 0) {
-		int len = powSize << 1;
+		int len = powSize;
 		int fakeList[powSize] = {2, 4, 6, 8, 7, 5, 3, 1};
 		list = (int*) malloc(len * sizeof(int));
 		for(int i = 0; i < len; i++) {
 			list[i] = fakeList[i];
 		}
+		printArr(list, len);
 	}
+
 	MPI_Barrier(MCW);
-
 	int val = list[rank];
-	while (powSize > 0) {
-		while (mask > 0) {
-			while (dmask > 0) {
-				int dest = rank ^ dmask;
-				MPI_Send(&val, 1, MPI_INT, dmask, 0, MCW);
-				MPI_Recv(&val, 1, MPI_INT, MPI_ANY_SOURCE, 0, MCW, MPI_STATUS_IGNORE);
-				cout << "received " << val << endl;
-			}
-		}
-	}
+	int recv = 0;
+//	while (powSize > 0) {
+//		while (mask > 0) {
+			mask >>= 1;
+			int dest = (rank ^ mask) - 1;
+			cout << "rank: " << rank <<  " -> dest: " << dest << " -> val: " << val << endl;
+			MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
+			MPI_Recv(&recv, 1, MPI_INT, MPI_ANY_SOURCE, 0, MCW, MPI_STATUS_IGNORE);
+			cout << "made it at least to here" << endl;
+//		}
+//	}
 
-	MPI_Finalize(); 
+	MPI_Finalize();
 
 	return 0;
 }
