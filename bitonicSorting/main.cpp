@@ -56,24 +56,29 @@ int main(int argc, char **argv) {
 	int recv = 0;
 	mask = 1;
 	int phase = 0;
-	while(phase < powSize) {
+	while(phase < powOfTwo) {
+//		printf("phase: %d\n\n\n", phase);
 		mask = 1;
-		mask >>= phase;
+		mask <<= phase;
+//		printf("phase: %d -> mask: %d\n\n\n", phase, mask);
 		while(mask > 0) {
 			dest = rank ^ mask;
 			//printf("rank: %d -> dest: %d\n", rank, dest);
 			MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
 			MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
-			int cending = ((rank & (mask << 1)) == 0);
+			int cending = !((rank & (mask << 1)) == 0);
 //			printf("rank: %d -> recived: %d -> have: %d\n", rank, recv, val);
 			val = ascDesc(cending, rank, mask, val, recv);
 //			printf("rank: %d -> kept: %d\n", rank, val);
 			mask >>= 1;
 		}
+		MPI_Barrier(MCW);
 		phase++;
+//		printf("\n\n");
+		MPI_Barrier(MCW);
 	}
-
-	printf("rank: %d -> val: %d\n\n", rank, val);
+	MPI_Barrier(MCW);
+	printf("\nrank: %d -> val: %d\n", rank, val);
 
 //	recv = 0;
 //	dmask = mask >> 1;
