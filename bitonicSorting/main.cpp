@@ -40,6 +40,7 @@ int main(int argc, char **argv) {
 
 	if(rank == 0) {
 		int fakeList[powSize] = {4, 3, 0, 7, 1, 6, 2, 5};
+		int fakeList[powSize] = {2, 4, 6, 8, 7, 5, 3, 1};
 		list = (int*) malloc(powSize * sizeof(int));
 		for(int i = 0; i < powSize; i++) {
 			list[i] = fakeList[i];
