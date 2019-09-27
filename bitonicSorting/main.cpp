@@ -60,10 +60,10 @@ int main(int argc, char **argv) {
 //		printf("phase: %d\n\n\n", phase);
 		mask = 1;
 		mask <<= phase;
-//		printf("phase: %d -> mask: %d\n\n\n", phase, mask);
+//		printf("rank: %d -> phase: %d -> mask: %d\n\n\n", rank, phase, mask);
 		while(mask > 0) {
 			dest = rank ^ mask;
-			//printf("rank: %d -> dest: %d\n", rank, dest);
+			printf("rank: %d -> dest: %d\n", rank, dest);
 			MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
 			MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
 			int cending = !((rank & (mask << 1)) == 0);
