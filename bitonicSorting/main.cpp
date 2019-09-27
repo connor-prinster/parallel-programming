@@ -21,8 +21,7 @@ int main(int argc, char **argv) {
 	srand(time(NULL)); // init the time
 
 	int rank, size;
-	// the list of random numbers
-	int* list = NULL;
+
 	// what power of two to go to
 	int powOfTwo = 0;
 	// the number of processors
@@ -32,35 +31,37 @@ int main(int argc, char **argv) {
 	MPI_Comm_rank(MCW, &rank);
 	MPI_Comm_size(MCW, &size);
 
-	while(powSize<size){
-       	powSize <<= 1;
-       	powOfTwo++;
-    }
+	while(powSize<size) {
+	       	powSize <<= 1;
+       		powOfTwo++;
+    	}
+	// the list of random numbers
+	int* list = (int*) malloc(powSize * sizeof(int));
+
 	int mask = size;
 
 	// generate the random list
 	if(rank == 0) {
-		int len = powSize;
 		int fakeList[powSize] = {2, 4, 6, 8, 7, 5, 3, 1};
-		list = (int*) malloc(len * sizeof(int));
-		for(int i = 0; i < len; i++) {
+		list = (int*) malloc(powSize * sizeof(int));
+		for(int i = 0; i < powSize; i++) {
 			list[i] = fakeList[i];
 		}
-		printArr(list, len);
+		printArr(list, powSize);
 	}
 
+	MPI_Bcast(list, powSize, MPI_INT, 0, MCW);
 	MPI_Barrier(MCW);
-	MPI_Bcast(list, 1, MPI_INT, 0, MCW);
-	printArr(list, 8);
+
 	int val = list[rank];
 	int recv = 0;
 	mask >>= 1;
-	int dest = (rank ^ mask) - 1;
-	cout << "rank: " << rank << " -> dest: " << dest << " -> val: " << val << endl;
+	int dest = (rank ^ mask);
+//	cout << "rank: " << rank << " -> dest: " << dest << " -> val: " << val << endl;
 
 	MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
-	MPI_Recv(&recv, 1, MPI_INT, MPI_ANY_SOURCE, 0, MCW, MPI_STATUS_IGNORE);
-	cout << "made it at least to here" << endl;
+	MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
+	printf("rank: %d -> val: %d -> recv: %d\n\n", rank, val, recv);
 
 	MPI_Finalize();
 
