@@ -55,6 +55,7 @@ int main(int argc, char **argv) {
 	int recv = 0;
 	dmask = 1;
 	int amask = 2;
+	// sort down, I guess?
 	while(amask < mask) {
 		int dest = (rank ^ dmask);
 		MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
