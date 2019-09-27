@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
 	int recv = 0;
 	dmask = 1;
 	int amask = 2;
-	while(dmask < mask) {
+	while(amask < mask) {
 		int dest = (rank ^ dmask);
 		MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
 		MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
 		dmask <<= 1;
 		amask <<= 1;
 	}
-//	printf("rank: %d -> val: %d\n\n", rank, val);
+	printf("rank: %d -> val: %d\n\n", rank, val);
 
 //	recv = 0;
 //	dmask = mask >> 1;
@@ -127,7 +127,7 @@ int ascDesc(int cending, int rank, int dmask, int a, int b) {
 			val = small;
 		}
 	}
-	printf("rank %d -> returning %d\n", rank, val);
+//	printf("rank %d -> returning %d\n", rank, val);
 	return val;
 }
 
