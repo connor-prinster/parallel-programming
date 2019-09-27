@@ -12,8 +12,6 @@
 
 using namespace std;
 
-// reminder that 0 = Ascending
-// reminder that 1 = Decending
 int ascDesc(int cending, int rank, int dmask, int a, int b);
 void printArr(int arr[], int randLength);
 
@@ -35,15 +33,13 @@ int main(int argc, char **argv) {
 	       	powSize <<= 1;
        		powOfTwo++;
     	}
-	// the list of random numbers
 	int* list = (int*) malloc(powSize * sizeof(int));
 
 	int mask = size;
 	int dmask = mask;
 
-	// generate the random list
 	if(rank == 0) {
-		int fakeList[powSize] = {2, 4, 6, 8, 7, 5, 3, 1};
+		int fakeList[powSize] = {4, 3, 0, 7, 1, 6, 2, 5};
 		list = (int*) malloc(powSize * sizeof(int));
 		for(int i = 0; i < powSize; i++) {
 			list[i] = fakeList[i];
@@ -56,14 +52,28 @@ int main(int argc, char **argv) {
 
 	int val = list[rank];
 	int recv = 0;
-	dmask >>= 1;
-	int dest = (rank ^ dmask);
-	while(dmask > 0) {
+	dmask = 1;
+	int amask = 2;
+	while(dmask < mask) {
+		int dest = (rank ^ dmask);
 		MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
 		MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
-		val = ascDesc(0, rank, dmask, val, recv);
-		dmask >>= 1;
+		int cending = ((rank & amask) == 0 ? 0 : 1);
+		val = ascDesc(cending, rank, dmask, val, recv);
+		dmask <<= 1;
+		amask <<= 1;
 	}
+	printf("rank: %d -> val: %d\n\n", rank, val);
+
+//	recv = 0;
+//	dmask = mask >> 1;
+//	int dest = (rank ^ dmask);
+//	while(dmask > 0) {
+//		MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
+//		MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
+//		val = ascDesc(0, rank, dmask, val, recv);
+//		dmask >>= 1;
+//	}
 
 	MPI_Finalize();
 	return 0;
@@ -89,24 +99,19 @@ int ascDesc(int cending, int rank, int dmask, int a, int b) {
 		big = b;
 		small = a;
 	}
-	//printf("cending: %d -> big: %d -> small: %d\n\n", cending, big, small);
 	if (cending == 0) { // ascending
 		if ((rank & dmask) == 0) {
-			// return smaller
 			return small;
 		}
 		else {
-			// return bigger
 			return big;
 		}
 	}
 	else { // descending
 		if ((rank & dmask) == 0) {
-			// return bigger
 			return big;
 		}
 		else {
-			// return smaller
 			return small;
 		}
 	}
