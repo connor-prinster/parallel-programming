@@ -50,13 +50,14 @@ int main(int argc, char **argv) {
 	}
 
 	MPI_Barrier(MCW);
+	MPI_Bcast(list, 1, MPI_INT, 0, MCW);
+	printArr(list, 8);
 	int val = list[rank];
-	cout << "val: " << val << endl;
 	int recv = 0;
-
 	mask >>= 1;
 	int dest = (rank ^ mask) - 1;
 	cout << "rank: " << rank << " -> dest: " << dest << " -> val: " << val << endl;
+
 	MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
 	MPI_Recv(&recv, 1, MPI_INT, MPI_ANY_SOURCE, 0, MCW, MPI_STATUS_IGNORE);
 	cout << "made it at least to here" << endl;
