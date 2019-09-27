@@ -64,10 +64,11 @@ int main(int argc, char **argv) {
 		int cending = !((rank & amask) == 0);
 //		printf("rank %d -> amask %d -> cending ->%d\n", rank, amask, cending);
 		val = ascDesc(cending, rank, dmask, val, recv);
+//		printf("rank: %d -> keptVal: %d\n", rank, val);
 		dmask <<= 1;
-//		amask <<= 1;
+		amask <<= 1;
 	}
-	printf("rank: %d -> val: %d\n\n", rank, val);
+//	printf("rank: %d -> val: %d\n\n", rank, val);
 
 //	recv = 0;
 //	dmask = mask >> 1;
@@ -94,6 +95,8 @@ void printArr(int* arr, int randLength) {
 
 //ascending = 0, decending = 1;
 int ascDesc(int cending, int rank, int dmask, int a, int b) {
+
+	int val = 0;
 	int big, small;
 	if (a > b) {
 		big = a;
@@ -103,22 +106,29 @@ int ascDesc(int cending, int rank, int dmask, int a, int b) {
 		big = b;
 		small = a;
 	}
+	//printf("rank: %d -> dmask: %d -> cending -> %d -> big: %d -> small %d\n", rank, dmask, cending,  big, small);
 	if (cending == 0) { // ascending
 		if ((rank & dmask) == 0) {
-			return small;
+		//	return small;
+			val = small;
 		}
 		else {
-			return big;
+//			return big;
+			val = big;
 		}
 	}
 	else { // descending
 		if ((rank & dmask) == 0) {
-			return big;
+//			return big;
+			val = big;
 		}
 		else {
-			return small;
+//			return small;
+			val = small;
 		}
 	}
+	printf("rank %d -> returning %d\n", rank, val);
+	return val;
 }
 
 string decToBin(int dec) {
