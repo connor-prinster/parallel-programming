@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
 
 	if(rank == 0) {
 		int fakeList[powSize] = {4, 3, 0, 7, 1, 6, 2, 5};
-		int fakeList[powSize] = {2, 4, 6, 8, 7, 5, 3, 1};
+//		int fakeList[powSize] = {2, 4, 6, 8, 7, 5, 3, 1};
 		list = (int*) malloc(powSize * sizeof(int));
 		for(int i = 0; i < powSize; i++) {
 			list[i] = fakeList[i];
@@ -59,10 +59,13 @@ int main(int argc, char **argv) {
 		int dest = (rank ^ dmask);
 		MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
 		MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
-		int cending = ((rank & amask) == 0 ? 0 : 1);
+
+		//cending would be 1 if (rank & amask == 0)
+		int cending = !((rank & amask) == 0);
+//		printf("rank %d -> amask %d -> cending ->%d\n", rank, amask, cending);
 		val = ascDesc(cending, rank, dmask, val, recv);
 		dmask <<= 1;
-		amask <<= 1;
+//		amask <<= 1;
 	}
 	printf("rank: %d -> val: %d\n\n", rank, val);
 
