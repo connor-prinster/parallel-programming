@@ -51,9 +51,9 @@ int main(int argc, char **argv) {
 	MPI_Bcast(list, powSize, MPI_INT, 0, MCW);
 	MPI_Barrier(MCW);
 
-	//int val = list[rank]; // the initial value will be the spot in the array
-	//int dest = 0; //init destination is initialized
-	//int recv = 0; // receive value is initialized here
+	int val = list[rank]; // the initial value will be the spot in the array
+	int dest = 0; //init destination is initialized
+	int recv = 0; // receive value is initialized here
 	//mask = 1; // mask will be at 1 to begin
 	//int phase = 0; // start at phase 0
 	//while(phase < (powOfTwo - 1)) { // go through (n - 1) times (with n being the 2^n multiplier)
