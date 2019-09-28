@@ -77,11 +77,13 @@ int main(int argc, char **argv) {
 	dmask = mask >> 1;
 	dest = (rank ^ dmask);
 	while(dmask > 0) {
+		dest = (rank ^ dmask);
 		MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
 		MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
 		val = ascDesc(0, rank, dmask, val, recv);
 		dmask >>= 1;
 	}
+	printf("\nrank: %d -> val: %d\n", rank, val);
 
 	MPI_Finalize();
 	return 0;
