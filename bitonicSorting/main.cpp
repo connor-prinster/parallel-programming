@@ -40,8 +40,8 @@ int main(int argc, char **argv) {
 
 	if(rank == 0) {
 		int fakeList[powSize] = {4, 3, 0, 7, 1, 6, 2, 5};
-//		int fakeList[powSize] = {2, 4, 6, 8, 7, 5, 3, 1};
 		list = (int*) malloc(powSize * sizeof(int));
+		printf("\n---------------\n Original List \n---------------\n");
 		for(int i = 0; i < powSize; i++) {
 			list[i] = fakeList[i];
 		}
@@ -70,21 +70,32 @@ int main(int argc, char **argv) {
 		// phase x is finished, move to phase x + 1;
 		phase++;
 	}
+//	if(rank == 0) {
+//		printf("\n\n----\n Bitonic List \n----\n");
+//	}
+//	MPI_Barrier(MCW);
+//	printf("\nrank: %d -> val: %d\n", rank, val);
+	MPI_Barrier(MCW);
+
+	mask = size;
+	recv = 0;
+	dmask = mask >> 1;
+	dest = (rank ^ dmask);
+	while(dmask > 0) {
+		dest = (rank ^ dmask);
+		MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
+		MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
+		val = ascDesc(0, rank, dmask, val, recv);
+		dmask >>= 1;
+	}
+//	printf("\nrank: %d -> val: %d\n", rank, val);
+
+	if(rank == 0) {
+		printf("\n\n-------------\n Sorted List \n-------------\n");
+	}
 	MPI_Barrier(MCW);
 	printf("\nrank: %d -> val: %d\n", rank, val);
-
-	//mask = size;
-	//recv = 0;
-	//dmask = mask >> 1;
-	//dest = (rank ^ dmask);
-	//while(dmask > 0) {
-	//	dest = (rank ^ dmask);
-	//	MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
-	//	MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
-	//	val = ascDesc(0, rank, dmask, val, recv);
-	//	dmask >>= 1;
-	//}
-	//printf("\nrank: %d -> val: %d\n", rank, val);
+	MPI_Barrier(MCW);
 
 	MPI_Finalize();
 	return 0;
