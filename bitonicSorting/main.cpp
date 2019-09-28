@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
 
 	recv = 0;
 	dmask = mask >> 1;
-	int dest = (rank ^ dmask);
+	dest = (rank ^ dmask);
 	while(dmask > 0) {
 		MPI_Send(&val, 1, MPI_INT, dest, 0, MCW);
 		MPI_Recv(&recv, 1, MPI_INT, dest, 0, MCW, MPI_STATUS_IGNORE);
