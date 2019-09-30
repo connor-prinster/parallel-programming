@@ -1,0 +1,33 @@
+#include <iostream>
+#include <mpi.h>
+#include <stdio.h>
+
+#define MCW MPI_COMM_WORLD
+
+using namespace std;
+
+int main(int argc, char **argv) {
+	if( argc < 4 ) {
+		printf("\nNot enough arguments. Requires 3 doubles as arguments\n");
+		return (1);
+	}
+
+	int rank, size;
+	int data;
+	MPI_Init(&argc, &argv);
+	MPI_Comm_rank(MCW, &rank);
+	MPI_Comm_size(MCW, &size);
+
+	double Re0 = atof(argv[1]);
+	double lm0 = atof(argv[2]);
+	double Re1 = atof(argv[3]);
+
+	MPI_Send(&rank, 1, MPI_INT, (rank + 1) % size, 0, MCW);
+	MPI_Recv(&data, 1, MPI_INT, MPI_ANY_SOURCE, 0, MCW, MPI_STATUS_IGNORE);
+
+//	cout << "I am " << rank << " of " << size << "; got message from " << data << endl;
+
+	MPI_Finalize();
+
+	return 0;
+}
