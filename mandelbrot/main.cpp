@@ -76,15 +76,11 @@ Color generateValue(complex<double> complex) {
 		iter++;
 	}
 
-	//cout << "iters: " << iter << endl;
-
-
 	Color color;
 
-	//cout << "iters: " << iter << endl;
-	int r = (255 * iter) / 33;
-	int g = (255 * iter) / 22;
-	int b = (255 * iter) / 11;
+	int r = (255 * iter) / 12;
+	int g = (255 * iter) / 21;
+	int b = (255 * iter) / 12;
 	if (iter < 10) {
 		color.blue = 0;
 		color.green = 0;
