@@ -5,6 +5,7 @@
 #include <string>
 #include <complex>
 #include <fstream>
+#include <mpi.h>
 
 #define MCW MPI_COMM_WORLD
 
@@ -19,48 +20,59 @@ struct Color
 
 int width = 512;
 int height = 512;
+const int MASTER = 0;
 
 Color generateValue(complex<double> complex);
 
 int main(int argc, char** argv) {
-	auto start = std::chrono::system_clock::now();
+	int rank, size;
 
-	if (argc < 4) {
-		printf("\nNot enough arguments. Requires 3 doubles as arguments\n");
-		return -1;
-	}
-	double r0 = atof(argv[1]);
-	double i0 = atof(argv[2]);
-	double r1 = atof(argv[3]);
-	double i1 = i0 + (r1 - r0);
+	MPI_Init(&argc, &argv);
+	MPI_Comm_rank(MCW, &rank);
+	MPI_Comm_size(MCW, &size);
 
-	// check to see if you can even open the ppm file
-	ofstream mandel("brot.ppm");
-	if (!mandel.is_open()) {
-		printf("you failed, we'll get 'em next time\n\n");
-		return -1;
-	}
+	// only run this on the master process
+	if (rank == MASTER) {
+		auto start = std::chrono::system_clock::now();
 
-	// fill in the file
-	mandel << "P3\n" << width << " " << height << " 255\n"; // this particular line is for the header
-	for (int i = 0; i < width; i++) {
-		for (int j = 0; j < height; j++) {
-			std::complex<double> complex(
-				r0 + (j * (r1 - r0) / height),
-				i0 + (i * (i1 - i0) / width)
-			);
-			Color val = generateValue(complex);
-			mandel << val.red << " " << val.blue << " " << val.green << "\n";
+		if (argc < 4) {
+			printf("\nNot enough arguments. Requires 3 doubles as arguments\n");
+			return -1;
 		}
-		mandel << "\n";
+		double r0 = atof(argv[1]);
+		double i0 = atof(argv[2]);
+		double r1 = atof(argv[3]);
+		double i1 = i0 + (r1 - r0);
+
+		// check to see if you can even open the ppm file
+		ofstream mandel("brot.ppm");
+		if (!mandel.is_open()) {
+			printf("you failed, we'll get 'em next time\n\n");
+			return -1;
+		}
+
+		// fill in the file
+		mandel << "P3\n" << width << " " << height << " 255\n"; // this particular line is for the header
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				std::complex<double> complex(
+					r0 + (j * (r1 - r0) / height),
+					i0 + (i * (i1 - i0) / width)
+				);
+				Color val = generateValue(complex);
+				mandel << val.red << " " << val.blue << " " << val.green << "\n";
+			}
+			mandel << "\n";
+		}
+		mandel.close();
+
+		auto end = std::chrono::system_clock::now();
+		std::chrono::duration<double> elapsed_seconds = end - start;
+		std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+		std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
 	}
-	mandel.close();
 
-	auto end = std::chrono::system_clock::now();
-	std::chrono::duration<double> elapsed_seconds = end - start;
-	std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-	std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
-
+	MPI_Finalize();
 	return 0;
 }
 
@@ -76,8 +88,12 @@ Color generateValue(complex<double> complex) {
 		iter++;
 	}
 
+	//cout << "iters: " << iter << endl;
+
+
 	Color color;
 
+	//cout << "iters: " << iter << endl;
 	int r = (255 * iter) / 12;
 	int g = (255 * iter) / 21;
 	int b = (255 * iter) / 12;
