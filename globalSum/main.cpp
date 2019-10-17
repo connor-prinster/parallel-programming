@@ -22,7 +22,6 @@ void finishVal(int total);
 int main(int argc, char** argv) {
 	auto start = std::chrono::system_clock::now();
 
-	int choice;
 	int rank, size;
 	MPI_Init(&argc, &argv);
 	MPI_Comm_rank(MCW, &rank);
