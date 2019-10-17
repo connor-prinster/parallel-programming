@@ -12,7 +12,6 @@
 using namespace std;
 const int MASTER = 0;
 
-int generateRandom();
 void masterSlave(int rank, int size);
 void ringAroundTheNeighbor(int rank, int size);
 void halfRing(int rank, int size);
@@ -21,7 +20,6 @@ bool master(int rank);
 void finishVal(int total);
 
 int main(int argc, char** argv) {
-	srand(time(NULL));
 	auto start = std::chrono::system_clock::now();
 
 	int choice;
@@ -36,10 +34,6 @@ int main(int argc, char** argv) {
 
 	MPI_Finalize();
 	return 0;
-}
-
-int generateRandom() {
-	return (rand() % 100 + 1);
 }
 
 bool master(int rank) {
@@ -60,8 +54,8 @@ void masterSlave(int rank, int size) {
 			MPI_Recv(&recv, 1, MPI_INT, i, 0, MCW, MPI_STATUS_IGNORE);
 			total += recv;
 		}
-		finishVal(total);
 
+		finishVal(total);
 		calculateEnd(start, "Master/Slave");
 	}
 }
@@ -72,6 +66,7 @@ void ringAroundTheNeighbor(int rank, int size) {
 	if(master(rank)) {
 		MPI_Send(&rank, 1, MPI_INT, 1, 0, MCW);
 	}
+
 	int total = 0;
 	MPI_Recv(&total, 1, MPI_INT, (rank - 1) % size, 0, MCW, MPI_STATUS_IGNORE);
 	total += rank;
@@ -98,12 +93,14 @@ void halfRing(int rank, int size) {
 		total += rank;
 		MPI_Recv(&rank, 1, MPI_INT, size - 1, 0, MCW, MPI_STATUS_IGNORE); // get from 7
 		total += rank;
+
 		finishVal(total);
 		calculateEnd(start, "Half Ring");
 	} 
 	else if (rank < half) { // 1, 2, 3
 		int recv = rank - 1;
 		int dest = (rank + 1) % half;
+
 		MPI_Recv(&total, 1, MPI_INT, recv, 0, MCW, MPI_STATUS_IGNORE);
 		total += rank;
 		MPI_Send(&total, 1, MPI_INT, dest, 0, MCW);
@@ -111,10 +108,10 @@ void halfRing(int rank, int size) {
 	else if( rank >= half) { // 4, 5, 6, 7
 		int recv = rank - 1;
 		int dest = half + ((rank + 1) % half);
+
 		if(rank == half) {
 			MPI_Recv(&total, 1, MPI_INT, 0, 0, MCW, MPI_STATUS_IGNORE); // from 0
-		}
-		else {
+		} else {
 			MPI_Recv(&total, 1, MPI_INT, recv, 0, MCW, MPI_STATUS_IGNORE); // anything else
 		}
 
@@ -122,8 +119,7 @@ void halfRing(int rank, int size) {
 
 		if(rank == (size - 1)) {
 			MPI_Send(&total, 1, MPI_INT, 0, 0, MCW);
-		} 
-		else {
+		} else {
 			MPI_Send(&total, 1, MPI_INT, dest, 0, MCW);
 		}
 
