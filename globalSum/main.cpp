@@ -72,7 +72,7 @@ void ringAroundTheNeighbor(int rank, int size) {
 	MPI_Send(&total, 1, MPI_INT, (rank + 1) % size, 0, MCW);
 
 	if(master(rank)) {
-		MPI_Recv(&total, 1, MPI_INT, 7, 0, MCW, MPI_STATUS_IGNORE);
+		MPI_Recv(&total, 1, MPI_INT, (size - 1), 0, MCW, MPI_STATUS_IGNORE);
 		finishVal(total);
 		calculateEnd(start, "Running the Ring");
 	}
