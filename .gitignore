@@ -135,3 +135,7 @@ ipch/
 *.VC.VC.opendb
 
 .vscode
+
+# MISC
+gameOfLife/starter.txt
+*.ppm
