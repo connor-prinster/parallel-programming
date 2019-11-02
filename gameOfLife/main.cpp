@@ -11,8 +11,8 @@
 using namespace std;
 const int ITERATIONS = 9;
 const int MASTER = 0;
-const int WIDTH = 32;
-const int HEIGHT = 32;
+const int WIDTH = 1024;
+const int HEIGHT = 1024;
 const int AREA = HEIGHT * WIDTH;
 const string FILENAME = "gol";
 
@@ -77,7 +77,6 @@ int main(int argc, char** argv) {
 				int recvSize = perProc * WIDTH;
 				int* tempRecvArr = (int*) malloc(recvSize * sizeof(int));
 				MPI_Recv(tempRecvArr, recvSize, MPI_INT, i, 0, MCW, MPI_STATUS_IGNORE);
-				// printf("perproc: %d -> numRows: %d\n", perProc, numRows);
 				for (int m = 1; m <= perProc; m++) {
 					for(int n = 0; n < WIDTH; n++) {
 						dataArr[i * ((m * WIDTH) + n)] = tempRecvArr[(m * WIDTH) + n];
