@@ -19,8 +19,8 @@ using namespace std;
 const int MASTER = 0;
 const int TASKS_PER_PROC = 4;
 const int THRESHOLD = 16;
-const int MAX_WORK = 20;
-const int MIN_WORK = 18;
+const int MAX_WORK = 200;
+const int MIN_WORK = 100;
 
 const int TESTPROC = 7;
 
@@ -192,6 +192,15 @@ int main(int argc, char** argv) {
 			if( (jobsCompleted + buffer) >= totalJobs) {
 				// printf("I'm DONE");
 				specialPill();
+				procStatus = POISON;
+
+				cout << "===========================" << endl;
+				cout << "Tasks completed!" << endl;
+				cout << "===========================" << endl;
+
+				calculateEnd(start);
+				MPI_Finalize();
+				return 0;
 			}
 			else {
 				ringFunction(0);
@@ -239,7 +248,7 @@ int main(int argc, char** argv) {
 		while(tag != POISON) {
 			if(!alreadyPrinted) {
 				alreadyPrinted = !alreadyPrinted;
-				cout << globalRank << " is done with " << workDone << "/" << maxWork <<" tasks" << endl;
+				cout << globalRank << " is done with " << workDone << " tasks" << endl;
 			}
 			flag = 0;
 			MPI_Status status;
@@ -267,7 +276,7 @@ int main(int argc, char** argv) {
 	}
 	cout << rank << " is completely dead" << endl;
 
-	MPI_Barrier(MCW);
+	// MPI_Barrier(MCW);
 	if (isMaster(rank)) {
 		calculateEnd(start);
 	}
@@ -287,7 +296,10 @@ void sendToNextProcess(int* data) {
 int ringFunction(int workDone) {
 	int newProc = (globalRank + 1) % totalSize;
 	// cout <<"ring function: " << globalRank << " to " << newProc << endl;
-	MPI_Send(&workDone, 1, MPI_INT, newProc, LIFE_SENDS, MCW);
+	// MPI_Send(&workDone, 1, MPI_INT, newProc, LIFE_SENDS, MCW);
+	MPI_Request req;
+	MPI_Isend(&workDone, 1, MPI_INT, newProc, LIFE_SENDS, MCW, &req);
+	
 	return newProc;
 }
 
@@ -301,7 +313,6 @@ void doWork(int taskSize) {
 
 void specialPill() {
 	for(int i = 1; i < totalSize; i++) {
-		cout << "killing " << i << endl;
 		MPI_Send(&POISON, 1, MPI_INT, i, LIFE_SENDS, MCW);
 	}
 }
